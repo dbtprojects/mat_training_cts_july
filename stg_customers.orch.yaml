@@ -1,0 +1,182 @@
+type: "orchestration"
+version: "1.0"
+pipeline:
+  components:
+    Start:
+      type: "start"
+      transitions:
+        unconditional:
+        - "create customers table"
+      parameters:
+        componentName: "Start"
+    create customers table:
+      type: "create-table-v2"
+      transitions:
+        success:
+        - "Load Customers"
+      parameters:
+        componentName: "create customers table"
+        createMethod: "Replace"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        table: "stg_customers"
+        snowflakeTableType: "Permanent"
+        columns:
+        - - "customerid"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "companyname"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "contactname"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "city"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "country"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "divisionid"
+          - "NUMBER"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "address"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "fax"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "phone"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "postalcode"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        - - "stateprovince"
+          - "VARCHAR"
+          - ""
+          - ""
+          - ""
+          - "No"
+          - "No"
+          - ""
+          - ""
+        defaultDdlCollation:
+        primaryKeys:
+        clusteringKeys:
+        dataRetentionTimeInDays: ""
+        comment:
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+    Load Customers:
+      type: "s3-load"
+      parameters:
+        componentName: "Load Customers"
+        stage: "[Custom]"
+        authentication: "Credentials"
+        s3ObjectPrefix: "s3://qwtoltpdat/csv/Customers.csv"
+        pattern: ".*"
+        encryption: "None"
+        warehouse: "[Environment Default]"
+        database: "[Environment Default]"
+        schema: "[Environment Default]"
+        targetTable: "STG_CUSTOMERS"
+        loadColumns:
+        - "customerid"
+        - "companyname"
+        - "contactname"
+        - "city"
+        - "country"
+        - "divisionid"
+        - "address"
+        - "fax"
+        - "phone"
+        - "postalcode"
+        - "stateprovince"
+        format: "COMMAFORMAT"
+        onError: "Abort Statement"
+        sizeLimitB:
+        purgeFiles: "False"
+        truncateColumns: "False"
+        forceLoad: "False"
+      postProcessing:
+        updateOutputMessage:
+        updateScalarVariables:
+design:
+  components:
+    Start:
+      position:
+        x: -520
+        "y": -20
+      tempMetlId: 1
+    create customers table:
+      position:
+        x: -360
+        "y": -20
+      tempMetlId: 2
+    Load Customers:
+      position:
+        x: -200
+        "y": -20
+      tempMetlId: 3
